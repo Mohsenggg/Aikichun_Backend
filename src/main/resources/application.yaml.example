@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: aikichun-backend 1.0
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5402/aikichun_db}
+    username: ${DB_USERNAME:aikichun_admin}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+server:
+  port: 8080
+
+aikichun:
+  jwt:
+    secret: ${AIKICHUN_JWT_SECRET}
+    expiration-hours: 5
+  storage:
+    upload-dir: ./uploads
+  otp:
+    expiry-minutes: 5
+    email:
+      from-email: ${SMTP_FROM_EMAIL}
+      from-name: ${SMTP_FROM_NAME:AIKICHUN MMA}
+
+cors:
+  allowed-origins: http://localhost:4200
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.aikichun: DEBUG

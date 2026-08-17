@@ -1,0 +1,173 @@
+{
+  "info": {
+    "name": "Aikichun Progress App - Auth API",
+    "description": "Test collection for Login & Register endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register (Multipart)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "fullName", "value": "Ahmed Ali", "type": "text" },
+            { "key": "email", "value": "ahmed@example.com", "type": "text" },
+            { "key": "password", "value": "Secret123", "type": "text" },
+            { "key": "dateOfBirth", "value": "2000-01-15", "type": "text" },
+            { "key": "profession", "value": "Engineer", "type": "text" },
+            { "key": "branch", "value": "SIX_OF_OCTOBER", "type": "text" },
+            { "key": "phoneNumber", "value": "+201234567890", "type": "text" },
+            { "key": "phoneNumberEmergency", "value": "+201234567891", "type": "text" },
+            { "key": "hasChronicConditionOrInjury", "value": "false", "type": "text" },
+            { "key": "subscriptionStartMonth", "value": "1", "type": "text" },
+            { "key": "subscriptionStartYear", "value": "2026", "type": "text" },
+            { "key": "profilePhoto", "type": "file", "src": "/path/to/profile.jpg" },
+            { "key": "idPhoto", "type": "file", "src": "/path/to/id.jpg" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Login (JSON)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"ahmed@example.com\", \"password\": \"Secret123\"}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Register - Duplicate Email (Expected 409)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "fullName", "value": "Ahmed Ali", "type": "text" },
+            { "key": "email", "value": "ahmed@example.com", "type": "text" },
+            { "key": "password", "value": "Secret123", "type": "text" },
+            { "key": "dateOfBirth", "value": "2000-01-15", "type": "text" },
+            { "key": "profession", "value": "Engineer", "type": "text" },
+            { "key": "branch", "value": "SIX_OF_OCTOBER", "type": "text" },
+            { "key": "phoneNumber", "value": "+201234567890", "type": "text" },
+            { "key": "phoneNumberEmergency", "value": "+201234567891", "type": "text" },
+            { "key": "hasChronicConditionOrInjury", "value": "false", "type": "text" },
+            { "key": "subscriptionStartMonth", "value": "1", "type": "text" },
+            { "key": "subscriptionStartYear", "value": "2026", "type": "text" },
+            { "key": "profilePhoto", "type": "file", "src": "/path/to/profile.jpg" },
+            { "key": "idPhoto", "type": "file", "src": "/path/to/id.jpg" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Login - Wrong Password (Expected 401)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"ahmed@example.com\", \"password\": \"WrongPassword\"}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Register - Weak Password (Expected 400)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "fullName", "value": "Test User", "type": "text" },
+            { "key": "email", "value": "test@example.com", "type": "text" },
+            { "key": "password", "value": "weak", "type": "text" },
+            { "key": "dateOfBirth", "value": "2000-01-15", "type": "text" },
+            { "key": "profession", "value": "Tester", "type": "text" },
+            { "key": "branch", "value": "SIX_OF_OCTOBER", "type": "text" },
+            { "key": "phoneNumber", "value": "+201234567890", "type": "text" },
+            { "key": "phoneNumberEmergency", "value": "+201234567891", "type": "text" },
+            { "key": "hasChronicConditionOrInjury", "value": "false", "type": "text" },
+            { "key": "subscriptionStartMonth", "value": "1", "type": "text" },
+            { "key": "subscriptionStartYear", "value": "2026", "type": "text" },
+            { "key": "profilePhoto", "type": "file", "src": "/path/to/profile.jpg" },
+            { "key": "idPhoto", "type": "file", "src": "/path/to/id.jpg" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Register - Invalid Phone (Expected 400)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "fullName", "value": "Test User", "type": "text" },
+            { "key": "email", "value": "test2@example.com", "type": "text" },
+            { "key": "password", "value": "Secret123", "type": "text" },
+            { "key": "dateOfBirth", "value": "2000-01-15", "type": "text" },
+            { "key": "profession", "value": "Tester", "type": "text" },
+            { "key": "branch", "value": "SIX_OF_OCTOBER", "type": "text" },
+            { "key": "phoneNumber", "value": "01234567890", "type": "text" },
+            { "key": "phoneNumberEmergency", "value": "+201234567891", "type": "text" },
+            { "key": "hasChronicConditionOrInjury", "value": "false", "type": "text" },
+            { "key": "subscriptionStartMonth", "value": "1", "type": "text" },
+            { "key": "subscriptionStartYear", "value": "2026", "type": "text" },
+            { "key": "profilePhoto", "type": "file", "src": "/path/to/profile.jpg" },
+            { "key": "idPhoto", "type": "file", "src": "/path/to/id.jpg" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    }
+  ]
+}
