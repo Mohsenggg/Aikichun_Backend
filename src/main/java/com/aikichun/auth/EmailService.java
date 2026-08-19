@@ -30,7 +30,7 @@ public class EmailService {
             message.setText("Your OTP code is: " + otpCode + "\n\nThis code expires in 5 minutes." +
                     "\n\nIf you did not request this code, please ignore this email.");
             mailSender.send(message);
-            log.info("OTP email sent successfully to: {}", toEmail);
+            //log.info("OTP email sent successfully to: {}", toEmail);
         } catch (Exception e) {
             log.error("Failed to send OTP email to: {}", toEmail, e);
             throw new RuntimeException("Failed to send OTP email: " + e.getMessage());

@@ -68,16 +68,6 @@ public class AuthService {
                     return new InvalidCredentialsException("Invalid email or password");
                 });
 
-        if (!user.getEmailVerified()) {
-            log.warn("Login failed - email not verified: {}", email);
-            throw new InvalidCredentialsException("Please verify your email first");
-        }
-
-        if (user.getAccountStatus() != AccountStatus.ACTIVE) {
-            log.warn("Login failed - account not active: email={}, status={}", email, user.getAccountStatus());
-            throw new InvalidCredentialsException("Account is not active");
-        }
-
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             log.warn("Login failed - password mismatch: email={}", email);
             throw new InvalidCredentialsException("Invalid email or password");

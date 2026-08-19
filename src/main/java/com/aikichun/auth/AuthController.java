@@ -9,6 +9,7 @@ import com.aikichun.user.repo.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -75,27 +76,20 @@ public class AuthController {
 
 
     @PostMapping("/send-otp")
-    public ResponseEntity<Map<String, String>> sendOtp(@RequestBody @Valid OtpEmailRequest request) {
+    public ResponseEntity<?> sendOtp(@RequestBody @Valid OtpEmailRequest request) {
         log.info("Send OTP endpoint called - email={}", request.email());
         otpService.sendOtp(request.email());
-        return ResponseEntity.ok(Map.of("message", "OTP sent to " + request.email()));
+        return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<AuthResponse> verifyOtp(@RequestBody @Valid OtpRequest request) {
+    public AuthResponse verifyOtp(@RequestBody @Valid OtpRequest request) {
         log.info("Verify OTP endpoint called - email={}", request.email());
-        otpService.verifyOtp(request.email(), request.otp());
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> {
-                    log.warn("Verify OTP failed - user not found: {}", request.email());
-                    return new IllegalArgumentException("User not found");
-                });
+                .orElseThrow(() -> new IllegalArgumentException("Invalid OTP"));
 
-        if (!user.getAccountStatus().equals(AccountStatus.PENDING_VERIFICATION)) {
-            log.warn("Verify OTP failed - user not in pending verification: email={}, status={}", request.email(), user.getAccountStatus());
-            throw new IllegalArgumentException("User already verified or inactive");
-        }
+        otpService.verifyOtp(request.email(), request.otp());
 
         user.setEmailVerified(true);
         user.setAccountStatus(AccountStatus.ACTIVE);
@@ -103,8 +97,6 @@ public class AuthController {
         log.info("User verified successfully - email={}, id={}", user.getEmail(), user.getId());
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
-        return ResponseEntity.ok(new AuthResponse(PublicUserDto.from(user), token, "Bearer", jwtService.getExpirationTime(token)));
-
+        return new AuthResponse(PublicUserDto.from(user), token, "Bearer", jwtService.getExpirationTime(token));
     }
-
 }

@@ -1,5 +1,6 @@
 package com.aikichun.auth.dto;
 
+import com.aikichun.user.entites.AccountStatus;
 import com.aikichun.user.entites.Role;
 import com.aikichun.user.entites.User;
 
@@ -9,14 +10,16 @@ public record PublicUserDto(
         UUID id,
         String email,
         String fullName,
-        Role role
+        Role role,
+        AccountStatus accountStatus
 ) {
     public static PublicUserDto from(User user) {
         return new PublicUserDto(
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
-                user.getRole()
+                user.getRole(),
+                user.getAccountStatus()
         );
     }
 }

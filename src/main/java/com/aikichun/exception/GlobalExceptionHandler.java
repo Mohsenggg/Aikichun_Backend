@@ -45,6 +45,26 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    @ExceptionHandler(OtpSendException.class)
+    public ResponseEntity<ErrorResponse> handleOtpSendException(OtpSendException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage(),
+                null
+        ));
+    }
+
+    @ExceptionHandler(OtpVerifiedException.class)
+    public ResponseEntity<ErrorResponse> handleOtpVerified(OtpVerifiedException ex) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                null
+        ));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponse(

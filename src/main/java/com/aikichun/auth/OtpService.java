@@ -1,7 +1,10 @@
 package com.aikichun.auth;
 
+import com.aikichun.exception.OtpSendException;
+import com.aikichun.exception.OtpVerifiedException;
 import com.aikichun.otp.Otp;
 import com.aikichun.otp.OtpRepository;
+import com.aikichun.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,39 +24,18 @@ public class OtpService {
 
     private final EmailService emailService;
     private final OtpRepository otpRepository;
+    private final UserRepository userRepository;
 
     @Value("${aikichun.otp.expiry-minutes:5}")
     private int otpExpiryTime;
 
-    /*
-        public void sendOtp(String email) {
-            log.info("OTP generation requested for email: {}", email);
-
-            // Generate 6-digit OTP code
-            String otpCode = String.format("%06d", new Random().nextInt(999999));
-            // Hash it (SHA-256)
-            String hashedOtp = hashOtp(otpCode);
-
-            // Delete any existing OTPs for this email
-            otpRepository.deleteByEmail(email);
-            log.debug("Deleted existing OTPs for email: {}", email);
-
-            // Save the hashed OTP in the database
-            Otp otp = Otp.builder()
-                    .email(email)
-                    .otpCode(hashedOtp)
-                    .expiresAt(Instant.now().plus(otpExpiryTime, ChronoUnit.MINUTES))
-                    .build();
-            otpRepository.save(otp);
-            log.info("OTP generated and saved for email: {}, expires at: {}", email, otp.getExpiresAt());
-
-            // Send the OTP via email
-            emailService.sendOtpEmail(email, otpCode);
-        }
-    */
     @Transactional
     public void sendOtp(String email) {
         log.info("OTP generation requested for email: {}", email);
+
+        if (!userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("No user found with this email");
+        }
 
         try {
             // Generate 6-digit OTP code
@@ -74,9 +56,14 @@ public class OtpService {
             otpRepository.save(otp);
             log.info("OTP generated and saved for email: {}, expires at: {}", email, otp.getExpiresAt());
 
-            // Send the OTP via email
-            emailService.sendOtpEmail(email, otpCode);
-            log.info("OTP email sent successfully to: {}", email);
+            try {
+
+                // Send the OTP via email
+                emailService.sendOtpEmail(email, otpCode);
+            } catch (Exception e) {
+                log.error("Failed to send OTP email to: {}", email, e);
+                throw new OtpSendException("Failed to send OTP email. Please try again later.");
+            }
 
         } catch (Exception e) {
             log.error("Failed to send OTP for email: {}", email, e);
@@ -91,16 +78,16 @@ public class OtpService {
         Otp otp = otpRepository.findByEmailAndOtpCode(email, hashedOtp)
                 .orElseThrow(() -> {
                     log.warn("OTP verification failed - invalid OTP for email: {}", email);
-                    return new IllegalArgumentException("Invalid OTP");
+                    return new OtpVerifiedException("Invalid OTP");
                 });
 
         if (otp.getExpiresAt().isBefore(Instant.now())) {
             log.warn("OTP has expired for email: {}", email);
-            throw new IllegalArgumentException("OTP has expired");
+            throw new OtpVerifiedException("OTP has expired");
         }
         if (otp.getConsumed()) {
             log.warn("OTP has already been consumed for email: {}", email);
-            throw new IllegalArgumentException("OTP has already been consumed");
+            throw new OtpVerifiedException("OTP has already been consumed");
         }
 
         otp.setConsumed(true);
