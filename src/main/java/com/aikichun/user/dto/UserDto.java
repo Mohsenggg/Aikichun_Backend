@@ -18,6 +18,7 @@ public record UserDto(UUID id,
                       String productsAndDiscounts,
                       String martialArtsExperience,
                       Boolean hasChronicConditionOrInjury,
+                      String medicalNotes,
                       Integer subscriptionStartMonth,
                       Integer subscriptionStartYear,
                       Role role) {
@@ -36,10 +37,10 @@ public record UserDto(UUID id,
                 user.getProductsAndDiscounts(),
                 user.getMartialArtsExperience(),
                 user.getHasChronicConditionOrInjury(),
+                user.getMedicalNotes(),
                 user.getSubscriptionStartMonth(),
                 user.getSubscriptionStartYear(),
                 user.getRole()
-
         );
     }
 }
