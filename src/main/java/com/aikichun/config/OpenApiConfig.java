@@ -20,7 +20,7 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Aikichun")
-                                .url("https://github.com/aikichun")))
+                                .url("https://github.com/Khaterx/Aikichun")))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer"))
                 .schemaRequirement("Bearer", new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)
