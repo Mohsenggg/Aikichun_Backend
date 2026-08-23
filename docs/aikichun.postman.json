@@ -12,7 +12,19 @@
                 {
                     "name": "login",
                     "description": "",
-                    "event": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();\r",
+                                    "pm.environment.set(\"token\", jsonData.token);"
+                                ],
+                                "type": "text/javascript",
+                                "packages": {}
+                            }
+                        }
+                    ],
                     "auth": {},
                     "request": {
                         "auth": {
@@ -199,7 +211,7 @@
                             "bearer": [
                                 {
                                     "key": "token",
-                                    "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2NTQ5YTQ0Yi1lN2E4LTRiY2UtYmIwOC03YzdjYWEzMmE4NjciLCJlbWFpbCI6Ik9tYXJAbWFpbC5jb20iLCJpYXQiOjE3ODY5NTE0MTIsImV4cCI6MTc4Njk5NDYxMn0.1XTQaOpEWAAZBFRayYY9eXYkj93a7SBbvNA50I0jNVOGQJAxHYT59je0KkQ9tau3jt1l_tn2bGNuGg0KlhIQWQ",
+                                    "value": "{{token}}",
                                     "type": "string"
                                 }
                             ]
@@ -241,7 +253,7 @@
                         "method": "POST",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\r\n  \"email\": \"2a7422da7c@emailinbo.live\",\r\n}",
+                            "raw": "{\r\n  \"email\": \"boyaba7727@novelv.com\",\r\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -283,7 +295,7 @@
                         "method": "POST",
                         "body": {
                             "mode": "raw",
-                            "raw": "{\r\n  \"email\": \"2a7422da7c@emailinbo.live\",\r\n  \"otp\": \"200104\"\r\n}",
+                            "raw": "{\r\n  \"email\": \"boyaba7727@novelv.com\",\r\n  \"otp\": \"074983\"\r\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -298,6 +310,199 @@
                                 "v1",
                                 "auth",
                                 "verify-otp"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Profile-Details",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [],
+                        "url": {
+                            "raw": "api/v1/user/me",
+                            "path": [
+                                "api",
+                                "v1",
+                                "user",
+                                "me"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update-Profile",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"fullName\": \"EL-Omda\",\r\n//   \"profession\": \"string\",\r\n//   \"phoneNumber\": \"+5438739113267\",\r\n//   \"phoneNumberEmergency\": \"+7725735563\",\r\n//   \"medicalNotes\": \"string\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [],
+                        "url": {
+                            "raw": "api/v1/user/profile",
+                            "path": [
+                                "api",
+                                "v1",
+                                "user",
+                                "profile"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update-Password",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"currentPassword\": \"string\",\r\n  \"newPassword\": \"string\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "header": [],
+                        "url": {
+                            "raw": "api/v1/user/profile",
+                            "path": [
+                                "api",
+                                "v1",
+                                "user",
+                                "profile"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        }
+                    },
+                    "response": [],
+                    "protocolProfileBehavior": {
+                        "strictSSL": false,
+                        "followRedirects": true
+                    }
+                },
+                {
+                    "name": "Update-Profile-Photo",
+                    "description": "",
+                    "event": [],
+                    "auth": {},
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "profilePhoto",
+                                    "value": "file://D:\\Kareem Khater\\Freelancer\\Aikichun-System\\aikichun-frontend\\aikichun-progress\\public\\aikichun-logo.png",
+                                    "type": "file",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "header": [],
+                        "url": {
+                            "raw": "api/v1/user/photo",
+                            "path": [
+                                "api",
+                                "v1",
+                                "user",
+                                "photo"
                             ],
                             "host": [
                                 "{{baseUrl}}"

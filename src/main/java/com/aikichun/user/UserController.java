@@ -28,7 +28,7 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<UserDto> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody @Valid UpdateProfileRequest request) {
+            @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(userService.updateProfile(userDetails.getUsername(), request));
     }
 

@@ -25,6 +25,7 @@ public class UserService {
     public UserDto getProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        log.info("Profile requested for email={}", email);
         return UserDto.from(user);
     }
 
@@ -33,11 +34,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.setFullName(request.fullName());
-        user.setProfession(request.profession());
-        user.setPhoneNumber(request.phoneNumber());
-        user.setPhoneNumberEmergency(request.phoneNumberEmergency());
-        user.setMedicalNotes(request.medicalNotes());
+        if (request.fullName() != null) user.setFullName(request.fullName());
+        if (request.profession() != null) user.setProfession(request.profession());
+        if (request.phoneNumber() != null) user.setPhoneNumber(request.phoneNumber());
+        if (request.phoneNumberEmergency() != null) user.setPhoneNumberEmergency(request.phoneNumberEmergency());
+        if (request.medicalNotes() != null) user.setMedicalNotes(request.medicalNotes());
 
         userRepository.save(user);
         log.info("Profile updated for email={}", email);

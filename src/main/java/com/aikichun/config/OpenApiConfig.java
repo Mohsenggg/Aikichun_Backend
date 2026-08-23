@@ -15,7 +15,7 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Aikichun MMA API 🥷")
+                        .title("Aikichun MMA API🥷")
                         .description("Backend API for Aikichun Progress App — martial arts management system")
                         .version("1.0.0")
                         .contact(new Contact()
