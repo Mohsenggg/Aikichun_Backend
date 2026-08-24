@@ -21,7 +21,8 @@ public record UserDto(UUID id,
                       String medicalNotes,
                       Integer subscriptionStartMonth,
                       Integer subscriptionStartYear,
-                      Role role) {
+                      Role role,
+                      String profilePhotoPath) {
 
     public static UserDto from(User user) {
         return new UserDto(
@@ -40,7 +41,8 @@ public record UserDto(UUID id,
                 user.getMedicalNotes(),
                 user.getSubscriptionStartMonth(),
                 user.getSubscriptionStartYear(),
-                user.getRole()
+                user.getRole(),
+                user.getProfilePhotoPath()
         );
     }
 }

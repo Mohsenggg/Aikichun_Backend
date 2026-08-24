@@ -1,7 +1,7 @@
 package com.aikichun.auth;
 
 import com.aikichun.auth.dto.*;
-import com.aikichun.storage.FileStorageService;
+import com.aikichun.user.UserService;
 import com.aikichun.user.dto.UserDto;
 import com.aikichun.user.entites.AccountStatus;
 import com.aikichun.user.entites.User;
@@ -9,9 +9,7 @@ import com.aikichun.user.repo.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +26,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final OtpService otpService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
 
     @PostMapping("/register")
@@ -98,5 +97,20 @@ public class AuthController {
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         return new AuthResponse(PublicUserDto.from(user), token, "Bearer", jwtService.getExpirationTime(token));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) {
+        log.info("Forgot password endpoint called - email={}", request.email());
+        otpService.sendOtp(request.email(), "PASSWORD_RESET");
+        return ResponseEntity.ok(Map.of("message", "Password reset OTP sent successfully"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        log.info("Reset password endpoint called - email={}", request.email());
+        otpService.verifyOtp(request.email(), request.otp(), "PASSWORD_RESET");
+        userService.resetPassword(request.email(), request.newPassword());
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
 }

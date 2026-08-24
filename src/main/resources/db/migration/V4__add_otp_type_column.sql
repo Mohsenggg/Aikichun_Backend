@@ -1,0 +1,3 @@
+ALTER TABLE otps ADD COLUMN type VARCHAR(32) NOT NULL DEFAULT 'EMAIL_VERIFICATION';
+
+CREATE INDEX idx_otps_email_type ON otps (email, type);

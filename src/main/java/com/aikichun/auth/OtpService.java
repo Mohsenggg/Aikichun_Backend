@@ -31,34 +31,34 @@ public class OtpService {
 
     @Transactional
     public void sendOtp(String email) {
-        log.info("OTP generation requested for email: {}", email);
+        sendOtp(email, "EMAIL_VERIFICATION");
+    }
+
+    @Transactional
+    public void sendOtp(String email, String type) {
+        log.info("OTP generation requested for email: {}, type: {}", email, type);
 
         if (!userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("No user found with this email");
         }
 
         try {
-            // Generate 6-digit OTP code
             String otpCode = String.format("%06d", new Random().nextInt(999999));
-            // Hash it (SHA-256)
             String hashedOtp = hashOtp(otpCode);
 
-            // Delete any existing OTPs for this email
-            otpRepository.deleteByEmail(email);
-            log.debug("Deleted existing OTPs for email: {}", email);
+            otpRepository.deleteByEmailAndType(email, type);
+            log.debug("Deleted existing OTPs for email: {}, type: {}", email, type);
 
-            // Save the hashed OTP in the database
             Otp otp = Otp.builder()
                     .email(email)
                     .otpCode(hashedOtp)
                     .expiresAt(Instant.now().plus(otpExpiryTime, ChronoUnit.MINUTES))
+                    .type(type)
                     .build();
             otpRepository.save(otp);
-            log.info("OTP generated and saved for email: {}, expires at: {}", email, otp.getExpiresAt());
+            log.info("OTP generated and saved for email: {}, type: {}, expires at: {}", email, type, otp.getExpiresAt());
 
             try {
-
-                // Send the OTP via email
                 emailService.sendOtpEmail(email, otpCode);
             } catch (Exception e) {
                 log.error("Failed to send OTP email to: {}", email, e);
@@ -66,33 +66,37 @@ public class OtpService {
             }
 
         } catch (Exception e) {
-            log.error("Failed to send OTP for email: {}", email, e);
-            throw e; // Re-throw so controller can handle it
+            log.error("Failed to send OTP for email: {}, type: {}", email, type, e);
+            throw e;
         }
     }
 
     public boolean verifyOtp(String email, String otpCode) {
-        log.info("Verifying OTP for email: {}", email);
+        return verifyOtp(email, otpCode, "EMAIL_VERIFICATION");
+    }
+
+    public boolean verifyOtp(String email, String otpCode, String type) {
+        log.info("Verifying OTP for email: {}, type: {}", email, type);
         String hashedOtp = hashOtp(otpCode);
 
-        Otp otp = otpRepository.findByEmailAndOtpCode(email, hashedOtp)
+        Otp otp = otpRepository.findByEmailAndOtpCodeAndType(email, hashedOtp, type)
                 .orElseThrow(() -> {
-                    log.warn("OTP verification failed - invalid OTP for email: {}", email);
+                    log.warn("OTP verification failed - invalid OTP for email: {}, type: {}", email, type);
                     return new OtpVerifiedException("Invalid OTP");
                 });
 
         if (otp.getExpiresAt().isBefore(Instant.now())) {
-            log.warn("OTP has expired for email: {}", email);
+            log.warn("OTP has expired for email: {}, type: {}", email, type);
             throw new OtpVerifiedException("OTP has expired");
         }
         if (otp.getConsumed()) {
-            log.warn("OTP has already been consumed for email: {}", email);
+            log.warn("OTP has already been consumed for email: {}, type: {}", email, type);
             throw new OtpVerifiedException("OTP has already been consumed");
         }
 
         otp.setConsumed(true);
         otpRepository.save(otp);
-        log.info("OTP verified successfully for email: {}", email);
+        log.info("OTP verified successfully for email: {}, type: {}", email, type);
         return true;
     }
 

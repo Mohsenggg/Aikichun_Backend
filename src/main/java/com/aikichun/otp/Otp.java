@@ -31,6 +31,10 @@ public class Otp {
     @Builder.Default
     private Boolean consumed = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private String type = "EMAIL_VERIFICATION";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

@@ -54,19 +54,35 @@ public class UserService {
             throw new InvalidCredentialsException("Current password is incorrect");
         }
 
-        if (newPassword.length() < 8) {
-            throw new IllegalArgumentException("New password must be at least 8 characters");
-        }
-        if (!newPassword.matches(".*[A-Z].*")) {
-            throw new IllegalArgumentException("New password must contain at least one uppercase letter");
-        }
-        if (!newPassword.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("New password must contain at least one digit");
-        }
+        validatePassword(newPassword);
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         log.info("Password changed for email={}", email);
+    }
+
+    @Transactional
+    public void resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        validatePassword(newPassword);
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        log.info("Password reset for email={}", email);
+    }
+
+    private void validatePassword(String password) {
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+        if (!password.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Password must contain at least one digit");
+        }
     }
 
     @Transactional
