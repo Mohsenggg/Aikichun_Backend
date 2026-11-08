@@ -1,5 +1,6 @@
 package com.aikichun.user.dto;
 
+import com.aikichun.user.entites.AccountStatus;
 import com.aikichun.user.entites.Role;
 import com.aikichun.user.entites.User;
 
@@ -22,7 +23,10 @@ public record UserDto(UUID id,
                       Integer subscriptionStartMonth,
                       Integer subscriptionStartYear,
                       Role role,
-                      String profilePhotoPath) {
+                      String profilePhotoPath,
+                      AccountStatus accountStatus,
+                      LocalDate subscriptionStartDate,
+                      LocalDate subscriptionEndDate) {
 
     public static UserDto from(User user) {
         return new UserDto(
@@ -42,7 +46,11 @@ public record UserDto(UUID id,
                 user.getSubscriptionStartMonth(),
                 user.getSubscriptionStartYear(),
                 user.getRole(),
-                user.getProfilePhotoPath()
+                user.getProfilePhotoPath(),
+                user.getAccountStatus(),
+                user.getSubscriptionStartDate(),
+                user.getSubscriptionEndDate()
         );
     }
 }
+

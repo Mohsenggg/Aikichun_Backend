@@ -95,7 +95,7 @@ public class AuthController {
         userRepository.save(user);
         log.info("User verified successfully - email={}, id={}", user.getEmail(), user.getId());
 
-        String token = jwtService.generateToken(user.getId(), user.getEmail());
+        String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getRole().name());
         return new AuthResponse(PublicUserDto.from(user), token, "Bearer", jwtService.getExpirationTime(token));
     }
 

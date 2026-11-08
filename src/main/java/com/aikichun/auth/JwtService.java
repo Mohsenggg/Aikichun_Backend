@@ -27,13 +27,22 @@ public class JwtService {
     }
 
     public String generateToken(UUID userId, String email) {
+        return generateToken(userId, email, "MEMBER");
+    }
+
+    public String generateToken(UUID userId, String email, String role) {
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("email", email)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationHours * 60 * 60 * 1000))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
     public java.time.Instant getExpirationTime(String token) {

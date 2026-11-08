@@ -73,8 +73,18 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        String token = jwtService.generateToken(user.getId(), user.getEmail());
-        log.info("Login success - id={}, email={}", user.getId(), user.getEmail());
+        if (user.getAccountStatus() == AccountStatus.BLOCKED) {
+            log.warn("Login failed - account blocked: email={}", email);
+            throw new InvalidCredentialsException("Account is blocked. Please contact support.");
+        }
+
+        if (user.getAccountStatus() == AccountStatus.PENDING_VERIFICATION) {
+            log.info("Login pending verification - id={}, email={}", user.getId(), user.getEmail());
+            return new AuthResponse(PublicUserDto.from(user), null, null, null);
+        }
+
+        String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getRole().name());
+        log.info("Login success - id={}, email={}, role={}", user.getId(), user.getEmail(), user.getRole());
 
         return new AuthResponse(PublicUserDto.from(user), token, "Bearer", jwtService.getExpirationTime(token));
     }

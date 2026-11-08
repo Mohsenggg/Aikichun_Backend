@@ -33,15 +33,13 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/webjars/**",
-                                "/uploads/**")
+                                "/uploads/**",
+                                "/api/v1/auth/**")
                         .permitAll()
-                        .requestMatchers(
-                                "/api/v1/auth/register",
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/logout",
-                                "/api/v1/auth/send-otp",
-                                "/api/v1/auth/verify-otp")
-                        .permitAll()
+                        .requestMatchers("/api/v1/coach/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin/users/**").hasAnyRole("ADMIN", "MODERATOR")
+                        .requestMatchers("/api/v1/trainee/**").authenticated()
+                        .requestMatchers("/api/v1/user/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

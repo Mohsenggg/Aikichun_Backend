@@ -54,6 +54,7 @@ public class User {
     @Column(name = "martial_arts_experience")
     private String martialArtsExperience;
 
+    @Builder.Default
     @Column(name = "has_chronic_condition_or_injury", nullable = false)
     private Boolean hasChronicConditionOrInjury = false;
 
@@ -72,22 +73,45 @@ public class User {
     @Column(name = "id_photo_path")
     private String idPhotoPath;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.MEMBER;
 
+    @Builder.Default
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", nullable = false)
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;
+
+    @Column(name = "subscription_start_date")
+    private LocalDate subscriptionStartDate;
+
+    @Column(name = "subscription_end_date")
+    private LocalDate subscriptionEndDate;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public boolean isSubscriptionActive(LocalDate today) {
+        if (this.accountStatus != AccountStatus.ACTIVE) {
+            return false;
+        }
+        if (this.subscriptionStartDate == null || this.subscriptionEndDate == null) {
+            return false;
+        }
+        return !today.isBefore(this.subscriptionStartDate) && !today.isAfter(this.subscriptionEndDate);
+    }
+
+    public boolean isSubscriptionActive() {
+        return isSubscriptionActive(LocalDate.now());
+    }
 
     @PrePersist
     protected void onCreate() {

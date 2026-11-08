@@ -35,8 +35,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 try {
                     UUID userId = jwtService.extractUserId(token);
                     var userDetails = userDetailsService.loadUserById(userId);
+
+                    if (!userDetails.isAccountNonLocked() || !userDetails.isEnabled()) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\":401,\"message\":\"Account is blocked. Please contact support.\"}");
+                        return;
+                    }
+
                     SecurityContextHolder.getContext().setAuthentication(
-                            new UsernamePasswordAuthenticationToken(userDetails, null, AuthorityUtils.createAuthorityList("ROLE_" + userDetails.getAuthorities()))
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
                     );
                 } catch (Exception e) {
                     // Invalid token; proceed without authentication
