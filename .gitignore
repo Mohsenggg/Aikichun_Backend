@@ -38,3 +38,12 @@ uploads/
 application-local.yaml
 application-prod.yaml
 application-dev.yaml
+application-local.properties
+application-*.local.properties
+
+### Environment variables and secrets ###
+.env
+.env.*
+*.env
+.env.local
+.env.*.local
